@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
+
 public class DBUserStrategy implements UserFetchStrategy {
 
     private final UserRepository userRepository;
