@@ -1,9 +1,10 @@
 package com.example.userdemo.service.impl;
 
+import com.example.userdemo.exception.LdapUserNotFoundException;
 import com.example.userdemo.model.User;
 import com.example.userdemo.repository.LdapRepository;
 import com.example.userdemo.service.UserFetchStrategy;
-import org.springframework.stereotype.Service;
+
 
 import java.util.Optional;
 
@@ -18,6 +19,8 @@ public class LdapUserStrategy implements UserFetchStrategy {
 
     @Override
     public Optional<User> getUserById(String id) {
-        return ldapRepository.getLDAPUsersById(id).map(ldapUser -> new User(ldapUser.getCatercId(), ldapUser.getEmail(), ldapUser.getGivenName()));
+        return Optional.ofNullable(ldapRepository.getLDAPUsersById(id)
+                .map(ldapUser -> new User(ldapUser.getCatercId(), ldapUser.getEmail(), ldapUser.getGivenName()))
+                .orElseThrow(() -> new LdapUserNotFoundException("LDAP user not found with id: " + id)));
     }
 }

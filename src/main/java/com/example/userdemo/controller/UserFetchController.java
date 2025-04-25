@@ -1,9 +1,13 @@
 package com.example.userdemo.controller;
 
+import com.example.userdemo.exception.DBUserNotFoundException;
+import com.example.userdemo.exception.LdapUserNotFoundException;
+import com.example.userdemo.exception.UserNotFoundException;
 import com.example.userdemo.model.User;
 import com.example.userdemo.service.UserFetchStrategy;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,8 +29,15 @@ public class UserFetchController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable String id) {
-        return strategy.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable String id) throws Exception {
+
+        try {
+            Optional<User> user = strategy.getUserById(id);
+            return user.map(ResponseEntity::ok)
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+        } catch (LdapUserNotFoundException | DBUserNotFoundException e) {
+            throw new UserNotFoundException(e.getMessage());
+        }
     }
 
 }
