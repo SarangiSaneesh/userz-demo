@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service("ldapUserStrategy")
+@Service
 public class LdapUserStrategy implements UserFetchStrategy {
 
     private final LdapRepository ldapRepository;
